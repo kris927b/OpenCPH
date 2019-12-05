@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - GameManager",
+            "request": "launch",
+            "mainClass": "com.opencph.game.GameManager",
+            "projectName": "OpenCPH"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - GameContainer",
+            "request": "launch",
+            "mainClass": "com.opencph.engine.GameContainer",
+            "projectName": "OpenCPH"
+        }
+    ]
+}
