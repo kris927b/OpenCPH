@@ -3,6 +3,7 @@ package com.opencph.game;
 import com.opencph.engine.AbstractGame;
 import com.opencph.engine.GameContainer;
 import com.opencph.engine.Renderer;
+import com.opencph.engine.gfx.Color;
 import com.opencph.engine.gfx.Image;
 import com.opencph.engine.gfx.Light;
 
@@ -16,7 +17,7 @@ public class GameManager extends AbstractGame {
         image = new Image("/test2.png");
         image2 = new Image("/test.png");
         image2.setLightBlock(Light.FULL);
-        light = new Light(50, 0xff00ffff);
+        light = new Light(250, Color.WHITE);
     }
 
     @Override

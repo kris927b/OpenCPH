@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.opencph.engine.gfx.Color;
 import com.opencph.engine.gfx.Font;
 import com.opencph.engine.gfx.Image;
 import com.opencph.engine.gfx.ImageTile;
@@ -27,10 +28,10 @@ public class Renderer {
     private int pW, pH;
     private int[] p;
     private int[] zBuffer;
-    private int[] lightMap;
-    private int[] lightBlock;
+    private Color[] lightMap;
+    private Color[] lightBlock;
 
-    private int ambientColor = 0xff232323;
+    private Color ambientColor = new Color(255, 0, 255);
     private int zDepth = 0;
     private boolean processing = false;
 
@@ -43,8 +44,8 @@ public class Renderer {
         pH = gc.getHeight();
         p = ((DataBufferInt) gc.getWindow().getImage().getRaster().getDataBuffer()).getData();
         zBuffer = new int[p.length];
-        lightMap = new int[p.length];
-        lightBlock = new int[p.length];
+        lightMap = new Color[p.length];
+        lightBlock = new Color[p.length];
     }
 
     public void clear() {
@@ -52,7 +53,7 @@ public class Renderer {
             p[i] = 0;
             zBuffer[i] = 0;
             lightMap[i] = ambientColor;
-            lightBlock[i] = 0;
+            lightBlock[i] = Color.BLACK;
         }
     }
 
@@ -80,9 +81,9 @@ public class Renderer {
         }
 
         for (int i = 0; i < lightMap.length; i++) {
-            float r = ((lightMap[i] >> 16) & 0xff) / 255f;
-            float g = ((lightMap[i] >> 8) & 0xff) / 255f;
-            float b = (lightMap[i] & 0xff) / 255f;
+            float r = lightMap[i].getRed() / 255f;
+            float g = lightMap[i].getGreen() / 255f;
+            float b = lightMap[i].getBlue() / 255f;
 
             p[i] = ((int)(((p[i] >> 16) & 0xff) * r) << 16 | 
                     (int)(((p[i] >> 8) & 0xff) * g) << 8 |
@@ -116,20 +117,20 @@ public class Renderer {
         }
     }
 
-    public void setLightMap(int x, int y, int value) {
+    public void setLightMap(int x, int y, Color value) {
         // Off-screen?
         if (x < 0 || x >= pW || y < 0 ||y >= pH) return;
 
-        int baseColor = lightMap[x + y * pW];
+        Color baseColor = lightMap[x + y * pW];
 
-        int maxRed = Math.max((baseColor >> 16) & 0xff, (value >> 16) & 0xff);
-        int maxGreen = Math.max((baseColor >> 8) & 0xff, (value >> 8) & 0xff);
-        int maxBlue = Math.max(baseColor & 0xff, value & 0xff);
+        int maxRed = Math.max(baseColor.getRed(), value.getRed());
+        int maxGreen = Math.max(baseColor.getGreen(), value.getGreen());
+        int maxBlue = Math.max(baseColor.getBlue(), value.getBlue());
 
-        lightMap[x + y * pW] = (maxRed << 16 | maxGreen << 8 | maxBlue);
+        lightMap[x + y * pW] = new Color(maxRed, maxGreen, maxBlue);
     }
 
-    public void setLightBlock(int x, int y, int value) {
+    public void setLightBlock(int x, int y, Color value) {
         // Off-screen?
         if (x < 0 || x >= pW || y < 0 ||y >= pH) return;
 
@@ -240,27 +241,6 @@ public class Renderer {
         }
     }
 
-    public void drawLine(int x0, int y0, int x1, int y1, int color) {
-        int dx = x1 - x0;
-        int dy = y1 - y0;
-
-        int D = (2 * dy) - dx;
-        int y = y0;
-
-        for (int x = x0; x < x1; x++) {
-            setPixel(x, y, color);
-            if (D > 0) {
-                y += 1;
-                D = D - 2 * dx;
-            }
-            D = D + 2 * dy;
-        }
-    }
-
-    public void drawEllipse(int centerX, int centerY, int width, int height, int color) {
-        
-    }
-
     public void drawLight(Light l, int offX, int offY) {
         lightRequests.add(new LightRequest(l, offX, offY));
     }
@@ -290,8 +270,8 @@ public class Renderer {
 
             if (screenX < 0 || screenX >= pW || screenY < 0 ||screenY >= pH) return;
 
-            int lightColor = l.getLightValue(x0, y0);
-            if (lightColor == 0) return;
+            Color lightColor = l.getLightValue(x0, y0);
+            if (lightColor == Color.BLACK) return;
 
             if (lightBlock[screenX + screenY * pW] == Light.FULL) return;
 

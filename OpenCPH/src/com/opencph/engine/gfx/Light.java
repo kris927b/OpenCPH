@@ -2,17 +2,18 @@ package com.opencph.engine.gfx;
 
 public class Light {
 
-    public static final int NONE = 0;
-    public static final int FULL = 1;
+    public static final Color NONE = new Color(0, 0, 0);
+    public static final Color FULL = new Color(255, 255, 255);
 
-    private int radius, diameter, color;
-    private int[] lightMap;
+    private int radius, diameter;
+    private Color color;
+    private Color[] lightMap;
 
-    public Light(int radius, int color) {
+    public Light(int radius, Color color) {
         this.radius = radius;
         this.diameter = this.radius * 2;
         this.color = color;
-        this.lightMap = new int[diameter * diameter];
+        this.lightMap = new Color[diameter * diameter];
 
         for (int y = 0; y < diameter; y++ ) {
             for (int x = 0; x < diameter; x++) {
@@ -22,18 +23,16 @@ public class Light {
 
                 if (dist < radius) {
                     double power = 1 - (dist / this.radius);
-                    this.lightMap[x + y * diameter] = ((int)(((color >> 16) & 0xff) * power) << 16 | 
-                                                    (int)(((color >> 8) & 0xff) * power) << 8 |
-                                                    (int)((color & 0xff) * power));
+                    this.lightMap[x + y * diameter] = new Color((int)(color.getRed() * power), (int)(color.getGreen() * power), (int)(color.getBlue() * power));
                 } else {
-                    this.lightMap[x + y * diameter] = 0;
+                    this.lightMap[x + y * diameter] = new Color(0, 0, 0);
                 }
             }
         }
     }
 
-    public int getLightValue(int x, int y) {
-        if (x < 0 || x >= diameter || y < 0 ||y >= diameter) return 0;
+    public Color getLightValue(int x, int y) {
+        if (x < 0 || x >= diameter || y < 0 ||y >= diameter) return NONE;
 
         return lightMap[x + y * diameter]; 
     }
@@ -54,19 +53,19 @@ public class Light {
         this.diameter = diameter;
     }
 
-    public int getColor() {
+    public Color getColor() {
         return this.color;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 
-    public int[] getLightMap() {
+    public Color[] getLightMap() {
         return this.lightMap;
     }
 
-    public void setLightMap(int[] lightMap) {
+    public void setLightMap(Color[] lightMap) {
         this.lightMap = lightMap;
     }
 

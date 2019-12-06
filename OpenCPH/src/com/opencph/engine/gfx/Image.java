@@ -9,7 +9,7 @@ public class Image {
     private int width, height;
     private int[] pixels;
     private boolean alpha = false;
-    private int lightBlock = Light.NONE;
+    private Color lightBlock = Light.NONE;
 
     public Image(String path) {
         BufferedImage image = null;
@@ -33,11 +33,11 @@ public class Image {
         this.height = h;
     }
 
-    public int getLightBlock() {
+    public Color getLightBlock() {
         return this.lightBlock;
     }
 
-    public void setLightBlock(int lightBlock) {
+    public void setLightBlock(Color lightBlock) {
         this.lightBlock = lightBlock;
     }
 
