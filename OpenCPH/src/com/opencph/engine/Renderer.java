@@ -31,7 +31,7 @@ public class Renderer {
     private Color[] lightMap;
     private Color[] lightBlock;
 
-    private Color ambientColor = new Color(255, 0, 255);
+    private Color ambientColor = new Color(23, 23, 23);
     private int zDepth = 0;
     private boolean processing = false;
 
@@ -194,7 +194,7 @@ public class Renderer {
         }
     }
 
-    public void drawText(String text, int offX, int offY, int color) {
+    public void drawText(String text, int offX, int offY, Color color) {
         Image fontImage = font.getFontImage();
         
         text = text.toUpperCase();
@@ -206,7 +206,7 @@ public class Renderer {
             for (int y = 0; y < fontImage.getHeight(); y++) {
                 for (int x = 0; x < font.getWidths()[unicode]; x++) {
                     if (fontImage.getPixels()[(x + font.getOffsets()[unicode]) + y * fontImage.getWidth()] == 0xffffffff) {
-                        setPixel(x + offX + offset, y + offY, color);
+                        setPixel(x + offX + offset, y + offY, color.getColorCode());
                     }
                 }
             }
@@ -215,28 +215,28 @@ public class Renderer {
         }
     }
 
-    public void drawRect(int offX, int offY, int width, int height, int color) {
+    public void drawRect(int offX, int offY, int width, int height, Color color) {
         ReturnObj sizes = offScreen(offX, offY, width, height);
         if (sizes == null) return;
         
         for (int y = sizes.newY; y < sizes.newHeight; y++) {
-            setPixel(offX, y + offY, color);
-            setPixel(offX + width, y + offY, color);
+            setPixel(offX, y + offY, color.getColorCode());
+            setPixel(offX + width, y + offY, color.getColorCode());
         }
 
         for (int x = sizes.newX; x < sizes.newWidth; x++) {
-            setPixel(x + offX, offY, color);
-            setPixel(x + offX, offY + height, color);
+            setPixel(x + offX, offY, color.getColorCode());
+            setPixel(x + offX, offY + height, color.getColorCode());
         }
     }
 
-    public void drawFillRect(int offX, int offY, int width, int height, int color) {
+    public void drawFillRect(int offX, int offY, int width, int height, Color color) {
         ReturnObj sizes = offScreen(offX, offY, width, height);
         if (sizes == null) return;
         
         for (int y = sizes.newY; y < sizes.newHeight; y++) {
             for (int x = sizes.newX; x < sizes.newWidth; x++) {
-                setPixel(x + offX, y + offY, color);
+                setPixel(x + offX, y + offY, color.getColorCode());
             }
         }
     }
@@ -312,6 +312,14 @@ public class Renderer {
 
     public void setProcessing(boolean processing) {
         this.processing = processing;
+    }
+
+    public Color getAmbientColor() {
+        return this.ambientColor;
+    }
+
+    public void setAmbientColor(Color ambientColor) {
+        this.ambientColor = ambientColor;
     }
 
 }

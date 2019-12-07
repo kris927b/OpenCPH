@@ -9,7 +9,7 @@ public class GameContainer implements Runnable {
     private AbstractGame game;
 
     private boolean running = false;
-    private final double UPDATE_CAP = 1.0/60.0;
+    private final double UPDATE_CAP = 1.0/30.0;
 
     private int width = 250, height = 250;
     private double scale = 3.0;
@@ -42,8 +42,10 @@ public class GameContainer implements Runnable {
         double unprocessedTime = 0;
 
         double frameTime = 0;
-        int frames = 0;
-        int fps = 0;
+        // int frames = 0;
+        // int fps = 0;
+
+        game.init(this);
 
         while (running) {
             render = false;
@@ -65,8 +67,8 @@ public class GameContainer implements Runnable {
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
-                    fps = frames;
-                    frames = 0;
+                    //fps = frames;
+                    //frames = 0;
                 }
             }
 
@@ -74,9 +76,9 @@ public class GameContainer implements Runnable {
                 renderer.clear();
                 game.render(this, renderer);
                 renderer.process();
-                renderer.drawText("FPS: " + fps, 0, 0, 0xffff0000);
+                //renderer.drawText("FPS: " + fps, 0, 0, 0xffff0000);
                 window.update();
-                frames++;
+                // frames++;
             } else {
                 try {
                     Thread.sleep(1);
@@ -132,4 +134,13 @@ public class GameContainer implements Runnable {
     public Input getInput() {
         return this.input;
     }
+
+    public Renderer getRenderer() {
+        return this.renderer;
+    }
+
+    public void setRenderer(Renderer renderer) {
+        this.renderer = renderer;
+    }
+
 }

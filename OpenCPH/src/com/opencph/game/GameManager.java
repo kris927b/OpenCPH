@@ -36,4 +36,9 @@ public class GameManager extends AbstractGame {
         GameContainer gc = new GameContainer(new GameManager());
         gc.start();
     }
+
+    @Override
+    public void init(GameContainer gc) {
+        // TODO Auto-generated method stub
+    }
 }
